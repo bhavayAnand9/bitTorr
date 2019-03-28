@@ -1,0 +1,22 @@
+{
+  "name": "bittorr",
+  "version": "1.0.0",
+  "description": "bit torrent client in node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bit",
+    "torrent",
+    "node.js",
+    "udp",
+    "computer",
+    "networking"
+  ],
+  "author": "bhavay anand",
+  "license": "ISC",
+  "dependencies": {
+    "bencode": "^2.0.1"
+  }
+}
