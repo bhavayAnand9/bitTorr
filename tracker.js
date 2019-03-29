@@ -119,16 +119,15 @@ const util = require('./util');
 module.exports.getPeers = (torrent, callback) => {
 
 	const socket = dgram.createSocket('udp4'); //creates an UDP dataram socket using udp4(IPv4 address)
-	const url = torrent.announce.toString('utf8');
+	const url = urlParse(torrent.announce.toString('utf8'));
 
 
 	//1. send connect request
 
 	//udpSend is just a convenience function that mostly just calls socket.send
 	//respType will check if the response was for the connect or the announce request. Since both responses come through the same socket, we want a way to distinguish them.
-	
 	udpSend(socket, buildConnReq(), url, (err) => {
-		console.log(`An error occured. ERROR: ${err}`);
+		console.log(`An error occured while sending msg to ${url.host} at port ${url.port}. ${err}`);
 		socket.close();
 	});
 
@@ -155,15 +154,11 @@ module.exports.getPeers = (torrent, callback) => {
 
 };
 
-function udpSend(socket, message, rawUrl, callack) {
+function udpSend(socket, message, rawUrl, callback) {
 	const url = urlParse(rawUrl); //takes a URL string, parses it, and returns a URL object.
-
+	console.log(url);
 	//callback only if an error occured
 	socket.send(message, 0, message.length, url.port, url.host, callback);
-}
-
-function respType(resp){
-	//...
 }
 
 // Builds up a connect req structure (ln 9)
@@ -261,4 +256,10 @@ function parseAnnounceResp(resp) {
 	      }
 	    })
 	}
+}
+
+function respType(resp){
+	const action = resp.readUInt32BE(0);
+	if(action === 0) return 'connect';
+	if(action === 1) return 'announce';
 }
